@@ -3,7 +3,10 @@ import NavBar from './components/NavBar'
 import {Switch, Route} from 'react-router-dom'
 import Home from './components/Home'
 import Auth from './components/Auth'
+import {inject, observer} from "mobx-react/index";
 
+@inject("authStore")
+@observer
 class App extends Component {
     render() {
         return (
@@ -15,6 +18,12 @@ class App extends Component {
                 </Switch>
             </div>
         );
+    }
+
+    componentDidMount() {
+        if (!this.props.authStore.isLoggedIn && localStorage.getItem("token") && localStorage.getItem("user")) {
+            this.props.authStore.setLoginAttributes(localStorage.getItem("token"), JSON.parse(localStorage.getItem("user")));
+        }
     }
 }
 

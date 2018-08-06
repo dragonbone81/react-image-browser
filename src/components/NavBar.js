@@ -1,7 +1,15 @@
 import React, {Component} from 'react'
 import {NavLink} from 'react-router-dom'
+import {inject, observer} from 'mobx-react'
+import PropTypes from 'prop-types';
 
+@inject("authStore")
+@observer
 class NavBar extends Component {
+    state = {
+        hamburgerClicked: false,
+    };
+
     render() {
         return (
             <nav className="navbar" aria-label="main navigation">
@@ -11,27 +19,56 @@ class NavBar extends Component {
                              alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28"/>
                     </a>
 
-                    <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
+                    <div onClick={this.hamburgerClicked} role="button"
+                         className={"navbar-burger " + (this.state.hamburgerClicked ? "is-active" : "")}
+                         aria-label="menu"
+                         aria-expanded="false">
                         <span aria-hidden="true"/>
                         <span aria-hidden="true"/>
                         <span aria-hidden="true"/>
-                    </a>
+                    </div>
                 </div>
-                <div className="navbar-menu">
+                <div className={"navbar-menu " + (this.state.hamburgerClicked ? "is-active" : "")}>
                     <div className="navbar-start">
-                        <NavLink className="navbar-item" to="/home">
-                            Home
-                        </NavLink>
+                        {this.props.authStore.isLoggedIn && !!this.props.authStore.displayUsername ?
+                            <div className="navbar-item">Welcome {this.props.authStore.displayUsername}</div>
+                            : ''
+                        }
+                        <div className="navbar-item">
+                            <NavLink className="navbar-item" to="/">
+                                Home
+                            </NavLink>
+                        </div>
                     </div>
                     <div className="navbar-end">
-                        <div className="navbar-item">
-                            <button className="button">Login</button>
-                        </div>
+                        {!this.props.authStore.isLoggedIn ?
+                            <div className="navbar-item">
+                                <button onClick={this.props.authStore.login}
+                                        className="button">Login
+                                </button>
+                            </div>
+                            :
+                            <div className="navbar-item">
+                                <button onClick={this.props.authStore.logout}
+                                        className="button">Logout
+                                </button>
+                            </div>
+                        }
                     </div>
                 </div>
             </nav>
         );
-    }
+    };
+
+    hamburgerClicked = () => {
+        this.setState({
+            hamburgerClicked: !this.state.hamburgerClicked,
+        });
+    };
 }
+
+NavBar.propTypes = {
+    authStore: PropTypes.object,
+};
 
 export default NavBar

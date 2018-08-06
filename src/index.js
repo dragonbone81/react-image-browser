@@ -5,10 +5,12 @@ import {BrowserRouter} from 'react-router-dom';
 import {Provider} from 'mobx-react'
 import AuthStore from './stores/AuthStore'
 
+const authStore = new AuthStore();
 ReactDOM.render(
-    <Provider authStore={AuthStore}>
-        <BrowserRouter>
+    <BrowserRouter>
+        <Provider authStore={authStore}>
             <App/>
-        </BrowserRouter>
-    </Provider>,
-    document.getElementById('root'));
+        </Provider>
+    </BrowserRouter>,
+    document.getElementById('root')
+);
