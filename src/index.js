@@ -5,7 +5,6 @@ import {BrowserRouter} from 'react-router-dom';
 import {Provider} from 'mobx-react'
 import AuthStore from './stores/AuthStore'
 
-// const authStore = new AuthStore();
 ReactDOM.render(
     <BrowserRouter>
         <Provider authStore={AuthStore}>
