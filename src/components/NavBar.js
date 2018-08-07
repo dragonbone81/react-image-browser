@@ -3,8 +3,6 @@ import {NavLink} from 'react-router-dom'
 import {inject, observer} from 'mobx-react'
 import PropTypes from 'prop-types';
 
-@inject("authStore")
-@observer
 class NavBar extends Component {
     state = {
         hamburgerClicked: false,
@@ -71,4 +69,4 @@ NavBar.propTypes = {
     authStore: PropTypes.object,
 };
 
-export default NavBar
+export default inject("authStore")(observer(NavBar));

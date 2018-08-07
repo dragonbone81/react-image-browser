@@ -3,8 +3,6 @@ import {inject, observer} from 'mobx-react'
 import PropTypes from "prop-types";
 import NavBar from "./NavBar";
 
-@inject("authStore")
-@observer
 class Auth extends Component {
     render() {
         return (
@@ -23,4 +21,4 @@ NavBar.propTypes = {
     authStore: PropTypes.object,
 };
 
-export default Auth
+export default inject("authStore")(observer(Auth));

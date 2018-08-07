@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {inject, observer} from "mobx-react/index";
 
-@inject("authStore")
-@observer
 class Home extends Component {
     render() {
         return (
@@ -23,4 +21,4 @@ class Home extends Component {
     }
 }
 
-export default Home
+export default inject("authStore")(observer(Home));

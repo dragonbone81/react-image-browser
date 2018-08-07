@@ -5,8 +5,6 @@ import Home from './components/Home'
 import Auth from './components/Auth'
 import {inject, observer} from "mobx-react/index";
 
-@inject("authStore")
-@observer
 class App extends Component {
     render() {
         return (
@@ -27,4 +25,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default inject("authStore")(observer(App));

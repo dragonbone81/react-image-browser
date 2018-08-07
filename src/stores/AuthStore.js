@@ -1,17 +1,44 @@
-import {observable, action, computed, flow} from 'mobx'
+import {observable, action, computed, flow, decorate, configure} from 'mobx'
 
-const clientID = "371bb3035e6e450e9a63e907561fc439";
+configure({enforceActions: true});
 
-export default class AuthStore {
+class AuthStore {
+    clientID = "371bb3035e6e450e9a63e907561fc439";
     redirectURI = window.location.protocol + "//" +
         window.location.hostname + (!!window.location.port ? (":" + window.location.port) : "") +
         '/auth/callback';
     loginURL = 'https://accounts.spotify.com/authorize' +
         '?response_type=token' +
-        '&client_id=' + clientID + '&scope=user-library-read' +
+        '&client_id=' + this.clientID + '&scope=user-library-read' +
         '&redirect_uri=' + encodeURIComponent(this.redirectURI);
-    @observable auth = {token: "", user: {}};
-    //action
+
+    auth = {token: "", user: {}};
+
+    setLoginAttributes = (token, user) => {
+        this.auth.user = user;
+        this.auth.token = token;
+    };
+
+    logout = () => {
+        this.auth = {token: "", user: {}};
+        localStorage.clear();
+    };
+
+    login = () => {
+        localStorage.setItem("redirectPath", window.location.pathname);
+        window.location = this.loginURL
+    };
+
+    get isLoggedIn() {
+        return (!!this.auth.token && !!this.auth.user)
+    }
+
+    get displayUsername() {
+        return this.auth.user ?
+            this.auth.user.display_name ? this.auth.user.display_name :
+                this.auth.user.id : null
+    }
+
     loginCallback = flow(function* (token) {
         localStorage.setItem("token", token);
         this.auth.token = token;
@@ -20,34 +47,14 @@ export default class AuthStore {
         this.auth.user = response;
         localStorage.setItem("user", JSON.stringify(this.auth.user));
     });
-
-    @action
-    setLoginAttributes = (token, user) => {
-        this.auth.user = user;
-        this.auth.token = token;
-    };
-
-    @action
-    logout = () => {
-        this.auth = {token: "", user: {}};
-        localStorage.clear();
-    };
-    @action
-    login = () => {
-        localStorage.setItem("redirectPath", window.location.pathname);
-        window.location = this.loginURL
-    };
-
-    @computed
-    get isLoggedIn() {
-        return (!!this.auth.token && !!this.auth.user)
-    }
-
-    @computed
-    get displayUsername() {
-        return this.auth.user ?
-            this.auth.user.display_name ? this.auth.user.display_name :
-                this.auth.user.id : null
-    }
-
 }
+
+decorate(AuthStore, {
+    auth: observable,
+    setLoginAttributes: action,
+    logout: action,
+    login: action,
+    isLoggedIn: computed,
+    displayUsername: computed,
+});
+export default new AuthStore()
