@@ -1,2 +1,2 @@
-# react-spotify
-React Spotify API Browser (React, MobX, ReactRouter)
+# react-youtube
+React Youtube API Browser (React, MobX, ReactRouter)
